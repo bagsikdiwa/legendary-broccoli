@@ -17,7 +17,9 @@ if [[ -n "$ld_status" ]]; then
     ld_status="Logical Device Status: Optimal"
 else
     ld_status="Logical Device Status: Not Optimal"
-fihttps://github.com/bagsikdiwa/legendary-broccoli/tree/main
+fi
+
+##https://github.com/bagsikdiwa/legendary-broccoli/tree/main
 
 # Check if physical device status is online
 if [[ -n "$pd_status" ]]; then
