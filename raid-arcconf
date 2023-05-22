@@ -1,0 +1,36 @@
+#################################################################
+#                                                               #
+#        bagsikdiwa                                             #  
+#                                                               #
+#################################################################
+
+#!/bin/bash
+
+# Run Adaptec command to get the status of logical devices
+ld_status=$(/usr/StorMan/arcconf GETCONFIG 1 LD | grep -i "Status of logical device" | grep -i "Optimal")
+
+# Run Adaptec command to get the status of physical devices
+pd_status=$(/usr/StorMan/arcconf GETCONFIG 1 PD | grep -i "State" | grep -i "Online")
+
+# Check if logical device status is optimal
+if [[ -n "$ld_status" ]]; then
+    ld_status="Logical Device Status: Optimal"
+else
+    ld_status="Logical Device Status: Not Optimal"
+fihttps://github.com/bagsikdiwa/legendary-broccoli/tree/main
+
+# Check if physical device status is online
+if [[ -n "$pd_status" ]]; then
+    pd_status="Physical Device Status: Online"
+else
+    pd_status="Physical Device Status: Not Online"
+fi
+
+# Email the status information to Teams
+teams_email="<teams-email-address>"
+email_subject="Adaptec RAID Controller Status"
+email_body="Adaptec RAID Controller Status:
+$ld_status
+$pd_status"
+
+echo "$email_body" | mail -s "$email_subject" "$teams_email"
