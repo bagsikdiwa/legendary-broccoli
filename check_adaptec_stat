@@ -1,0 +1,29 @@
+#!/bin/bash                                                              
+#>> bagsikdiwa <<                                         
+#raid-arcconf nagios plugins raid status                
+#
+# Check Adaptec RAID Controller Disk Status Plugin
+
+# exit codes
+STATE_OK=0
+STATE_WARNING=1
+STATE_CRITICAL=2
+STATE_UNKNOWN=3
+
+# execute commands and capture output
+LD_Status=$(sudo /usr/sbin/arcconf GETCONFIG 1 LD | awk '/Status of Logical Device/{print $NF}')
+PD_Output=$(sudo /usr/sbin/arcconf GETCONFIG 1 PD)
+PD_Status=$(echo "$PD_Output" | awk '/State/{print $NF}')
+PD_Serial=$(echo "$PD_Output" | awk '/Serial number/{print $NF}')
+LD_Segment=$(sudo /usr/sbin/arcconf GETCONFIG 1 LD 0 | awk '/Segment/{print $NF}')
+
+# check logical device status
+if [[ "$LD_Status" == "Optimal" && "$PD_Status" == *"Online"* ]]; then
+    echo "OK - RAID controller and disk are in optimal and online state"
+    echo "Serial number: $PD_Serial"
+    echo "Segment #: $LD_Segment"
+    exit $STATE_OK
+else
+    echo "CRITICAL - Logical device is not in an optimal state"
+    exit $STATE_CRITICAL
+fi
